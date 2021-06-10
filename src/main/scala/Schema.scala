@@ -18,11 +18,13 @@ final case class Record[A](fields: List[Field[_]]) extends Schema[A]
 
 final class Lazy[A](private[this] val eval: () => Schema[A]) extends Schema[A]:
   lazy val value: Schema[A] = eval()
+  override def toString: String = s"Lazy($value)"
 
 object Lazy:
-  def apply[A](a: () => Schema[A]): Lazy[A] = new Lazy(() => a())
+  def apply[A](a: => Schema[A]): Lazy[A] = new Lazy(() => a)
 
 object Schema:
   implicit object StringSchema extends Schema[String]
+  final case class Optional[A](schema: Schema[A]) extends Schema[Option[A]]
 
-  def apply[A](using s: Schema[A]): Schema[A] = s
+  def apply[A](using s: DeriveSchema[A]): Schema[A] = s.derive
