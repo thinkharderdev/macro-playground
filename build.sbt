@@ -5,6 +5,5 @@ lazy val root = project
   .settings(
     name := "macro-playground",
     version := "0.1.0",
-
     scalaVersion := scala3Version
   )
